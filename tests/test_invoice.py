@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 # A library that provides a Python interface to the Telegram Bot API
-# Copyright (C) 2015-2017
+# Copyright (C) 2015-2020
 # Leandro Toledo de Souza <devs@python-telegram-bot.org>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ def invoice():
                    TestInvoice.currency, TestInvoice.total_amount)
 
 
-class TestInvoice(object):
+class TestInvoice:
     payload = 'payload'
     prices = [LabeledPrice('Fish', 100), LabeledPrice('Fish Tax', 1000)]
     provider_data = """{"test":"test"}"""
@@ -100,6 +100,8 @@ class TestInvoice(object):
             need_phone_number=True,
             need_email=True,
             need_shipping_address=True,
+            send_phone_number_to_provider=True,
+            send_email_to_provider=True,
             is_flexible=True)
 
         assert message.invoice.currency == self.currency
@@ -110,21 +112,11 @@ class TestInvoice(object):
 
     def test_send_object_as_provider_data(self, monkeypatch, bot, chat_id, provider_token):
         def test(_, url, data, **kwargs):
-            return data['provider_data'] == '{"test_data": 123456789}'
+            return (data['provider_data'] == '{"test_data": 123456789}'  # Depends if using
+                    or data['provider_data'] == '{"test_data":123456789}')  # ujson or not
 
         monkeypatch.setattr('telegram.utils.request.Request.post', test)
 
         assert bot.send_invoice(chat_id, self.title, self.description, self.payload,
                                 provider_token, self.start_parameter, self.currency,
                                 self.prices, provider_data={'test_data': 123456789})
-
-    def test_send_nonesense_as_provider_data(self, monkeypatch, bot, chat_id, provider_token):
-        def test(_, url, data, **kwargs):
-            return True
-
-        monkeypatch.setattr('telegram.utils.request.Request.post', test)
-
-        with pytest.raises(TypeError):
-            assert bot.send_invoice(chat_id, self.title, self.description, self.payload,
-                                provider_token, self.start_parameter, self.currency,
-                                self.prices, provider_data={'a', 'b', 'c'})

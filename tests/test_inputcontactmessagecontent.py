@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 # A library that provides a Python interface to the Telegram Bot API
-# Copyright (C) 2015-2017
+# Copyright (C) 2015-2020
 # Leandro Toledo de Souza <devs@python-telegram-bot.org>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ def input_contact_message_content():
                                       last_name=TestInputContactMessageContent.last_name)
 
 
-class TestInputContactMessageContent(object):
+class TestInputContactMessageContent:
     phone_number = 'phone number'
     first_name = 'first name'
     last_name = 'last name'
@@ -43,9 +43,9 @@ class TestInputContactMessageContent(object):
         input_contact_message_content_dict = input_contact_message_content.to_dict()
 
         assert isinstance(input_contact_message_content_dict, dict)
-        assert input_contact_message_content_dict['phone_number'] == \
-               input_contact_message_content.phone_number
-        assert input_contact_message_content_dict['first_name'] == \
-               input_contact_message_content.first_name
-        assert input_contact_message_content_dict['last_name'] == \
-               input_contact_message_content.last_name
+        assert (input_contact_message_content_dict['phone_number']
+                == input_contact_message_content.phone_number)
+        assert (input_contact_message_content_dict['first_name']
+                == input_contact_message_content.first_name)
+        assert (input_contact_message_content_dict['last_name']
+                == input_contact_message_content.last_name)
